@@ -30,7 +30,16 @@ export const { changeTable } = navbarSlice.actions;
 const tableBoxSlice = createSlice({
   name: 'tableBox',
   initialState: {
-    data: {},
+    data: {
+      home: [],
+    },
+    headings: [
+      'id',
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+    ],
     errors: {},
     sort: {
       order: ['firstName', 'email'],
@@ -52,6 +61,12 @@ const tableBoxSlice = createSlice({
     updateError: (state, { payload }) => {
       state.error = payload.error;
     },
+    nextPage: (state) => {
+      state.settings.currentPageNumber += 1;
+    },
+    prevPage: (state) => {
+      state.settings.currentPageNumber -= 1;
+    },
   },
   extraReducers: {
     'navbar/changeTable': (state, action) => {
@@ -59,6 +74,7 @@ const tableBoxSlice = createSlice({
     },
   },
 });
+export const { nextPage, prevPage } = tableBoxSlice.actions;
 
 export default combineReducers({
   navbarBox: navbarSlice.reducer,

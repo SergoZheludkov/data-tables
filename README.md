@@ -1,10 +1,8 @@
-Test project "Tables"
+My start setup
 ========================
-![Node CI](https://github.com/SergoZheludkov/data-tables/workflows/Node%20CI/badge.svg)
 
 Technology stack
 ------------------------
 
 * React
 * Redux
-* Bootstrap
