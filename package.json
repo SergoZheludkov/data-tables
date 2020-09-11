@@ -5,9 +5,7 @@
   "main": "./src/index.jsx",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build-server": "babel server --out-dir dist --source-maps inline && cp -r server/views dist/views",
-    "build-app": "npx webpack -p --env production",
-    "build": "npm run build-app && npm run build-server"
+    "build": "npx webpack -p --env production"
   },
   "repository": {
     "type": "git",

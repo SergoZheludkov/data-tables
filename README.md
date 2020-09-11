@@ -1,5 +1,6 @@
-Test project to Future-group "Tables"
+Test project "Tables"
 ========================
+![Node CI](https://github.com/SergoZheludkov/data-tables/workflows/Node%20CI/badge.svg)
 
 Technology stack
 ------------------------

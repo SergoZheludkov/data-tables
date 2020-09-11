@@ -29,3 +29,5 @@ settings:
     - node
     - webpack:
       - config: webpack.config.js
+  react:
+    version: 'detect'
