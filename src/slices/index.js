@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { createSlice } from '@reduxjs/toolkit';
+import _ from 'lodash';
 
 // “Мутабельный” стиль обработки событий доступен благодаря использованию библиотеки Immer
 // которая встроена в Redux toolkit.
@@ -25,11 +26,12 @@ const navbarSlice = createSlice({
 });
 
 export const { changeTable } = navbarSlice.actions;
-
 // -------------------------------------------------------
 const tableBoxSlice = createSlice({
   name: 'tableBox',
   initialState: {
+    statuses: {},
+    errors: {},
     data: {
       home: [],
     },
@@ -40,22 +42,24 @@ const tableBoxSlice = createSlice({
       'email',
       'phone',
     ],
-    errors: {},
-    sort: {
-      order: ['firstName', 'email'],
-      type: {
-        firstName: 'asc',
-        email: 'desc',
-      },
-    },
     settings: {
       currentPageNumber: 1,
-      numberOfLineDisplayed: 50,
+      numberOfRowsDisplayed: 50,
+      rowsDisplayOptions: [50, 100, 200],
+    },
+    sort: {
+      order: [],
+      type: {},
+    },
+    filtered: {
+      search: '',
+      head: '',
     },
   },
   reducers: {
     updateData: (state, { payload }) => {
-      const { type, data } = payload;
+      const { type, data, status } = payload;
+      state.statuses[type] = status;
       state.data[type] = data;
     },
     updateError: (state, { payload }) => {
@@ -67,6 +71,26 @@ const tableBoxSlice = createSlice({
     prevPage: (state) => {
       state.settings.currentPageNumber -= 1;
     },
+    sortReset: (state) => {
+      state.sort = { order: [], type: {} };
+    },
+    removeSortedType: (state, { payload }) => {
+      state.sort.order = _.without(state.sort.order, payload.type);
+      state.sort.type = _.omit(state.sort.type, [payload.type]);
+    },
+    changeNumberOfRowsDisplayed: (state, { payload }) => {
+      state.settings.numberOfRowsDisplayed = payload.numberOfRows;
+      state.settings.currentPageNumber = 1;
+    },
+    changeSorting: (state, { payload }) => {
+      const checkedOrder = state.sort.order.includes(payload.head);
+      if (!checkedOrder) state.sort.order.push(payload.head);
+      state.sort.type[payload.head] = state.sort.type[payload.head] === 'asc' ? 'desc' : 'asc';
+    },
+    filterData: (state, { payload }) => {
+      state.filtered = payload.filterSettings;
+      state.settings.currentPageNumber = 1;
+    },
   },
   extraReducers: {
     'navbar/changeTable': (state, action) => {
@@ -74,7 +98,16 @@ const tableBoxSlice = createSlice({
     },
   },
 });
-export const { nextPage, prevPage } = tableBoxSlice.actions;
+export const {
+  nextPage,
+  prevPage,
+  setCurrentPage,
+  sortReset,
+  removeSortedType,
+  filterData,
+  changeNumberOfRowsDisplayed,
+  changeSorting,
+} = tableBoxSlice.actions;
 
 export default combineReducers({
   navbarBox: navbarSlice.reducer,

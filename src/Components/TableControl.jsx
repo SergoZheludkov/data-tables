@@ -2,35 +2,75 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { descriptionToSortedInfoSelector, maxPageNumberSelector } from '../selectors';
-import Search from './Search';
-import { nextPage, prevPage } from '../slices';
+import { maxPageNumberSelector } from '../selectors';
 
+import {
+  nextPage,
+  prevPage,
+  changeNumberOfRowsDisplayed,
+} from '../slices';
 // ------------------------------------------------------------------------------------------
-// div with information about sort and with buttons controlling the number of displayed lines
-const mapStateToPropsForSortedInfo = (state) => ({
+/* const mapStateToPropsForSortedInfo = (state) => ({
   description: descriptionToSortedInfoSelector(state),
 });
-const SortedInfo = (props) => {
-  const { description } = props;
+const actionCreatorsForSortedInfo = { sortReset };
+const MenuForSortedInfo = (props) => {
+  const {
+    description,
+    sortReset: reset,
+  } = props;
+  const handlerReset = (event) => {
+    event.preventDefault();
+    reset();
+  };
   return (
-    <div className="d-flex justify-content-between border">
-      <div className="d-flex flex-fill justify-content-between align-items-center p-2 border-right">
-        {description}
-        <Button variant="primary">Reset</Button>
-      </div>
-      <div className="d-flex justify-content-end p-2 border-right">
-        <ButtonGroup aria-label="Basic example">
-          <Button variant="secondary">50</Button>
-          <Button variant="secondary">100</Button>
-          <Button variant="secondary">200</Button>
-        </ButtonGroup>
-      </div>
-      <Search />
+    <div className="d-flex flex-fill justify-content-between align-items-center p-2 border-right">
+      {description}
+      <Button onClick={handlerReset} variant="primary">Reset</Button>
     </div>
   );
 };
-export const SortedInfoBox = connect(mapStateToPropsForSortedInfo)(SortedInfo);
+const MenuForSortedInfoBox = connect(
+  mapStateToPropsForSortedInfo,
+  actionCreatorsForSortedInfo,
+)(MenuForSortedInfo); */
+// ------------------------------------------------------------------------------------------
+const mapStateToPropsForTheNumberOfRows = (state) => ({
+  numberOfRowsDisplayed: state.tableBox.settings.numberOfRowsDisplayed,
+  rowsDisplayOptions: state.tableBox.settings.rowsDisplayOptions,
+});
+const actionCreatorsForTheNumberOfRows = { changeNumberOfRowsDisplayed };
+const ButtonsControlTheNumberOfRows = (props) => {
+  const {
+    numberOfRowsDisplayed,
+    rowsDisplayOptions,
+    changeNumberOfRowsDisplayed: changeNumber,
+  } = props;
+  const handlerChangeNumbersOfRows = (numberOfRows) => (event) => {
+    event.preventDefault();
+    changeNumber({ numberOfRows });
+  };
+  return (
+    <div className="d-flex justify-content-end p-2 border-right">
+      <ButtonGroup aria-label="Basic example">
+      {rowsDisplayOptions.map((option) => (
+        <Button
+          onClick={handlerChangeNumbersOfRows(option)}
+          key={option}
+          active={option === numberOfRowsDisplayed}
+          variant="secondary"
+        >
+          {option}
+        </Button>
+      ))}
+      </ButtonGroup>
+    </div>
+  );
+};
+export const ButtonsControlTheNumberOfRowsBox = connect(
+  mapStateToPropsForTheNumberOfRows,
+  actionCreatorsForTheNumberOfRows,
+)(ButtonsControlTheNumberOfRows);
 // ------------------------------------------------------------------------------------------
 // div with information about number page and with buttons controlling the table page
 const mapStateToPropsForTableControl = (state) => ({
@@ -75,7 +115,7 @@ const TableControl = (props) => {
     </div>
   );
 };
-export const TableControlBox = connect(
+export const PageControlBox = connect(
   mapStateToPropsForTableControl,
   actionCreatorsForTableControl,
 )(TableControl);

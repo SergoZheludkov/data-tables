@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Navbar from './Navbar';
 import TableBox from './TableBox';
 
-const MyComponent = () => (
+const App = () => (
   <Container fluid>
     <Navbar />
     <Row>
@@ -16,4 +16,4 @@ const MyComponent = () => (
   </Container>
 );
 
-export default MyComponent;
+export default App;

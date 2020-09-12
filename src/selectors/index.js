@@ -2,50 +2,51 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 
 // ------------------------------------------------------------------------------------------
-// utilits
-const getSortSettingArrays = ({ order, type }) => {
-  const types = order.map((columnName) => type[columnName]);
-  return { order, types };
-};
-
-const getTableData = (type) => (state) => state.tableBox.data[type];
+const getTableData = (type) => (state) => state.tableBox.data[type] || [];
+const getFilterSetting = (state) => state.tableBox.filtered;
 const getSortSetting = (state) => state.tableBox.sort;
-const getNumberOfLineDisplayed = (state) => state.tableBox.settings.numberOfLineDisplayed;
+const getNumberOfRowsDisplayed = (state) => state.tableBox.settings.numberOfRowsDisplayed;
 const getCurrentPageNumber = (state) => state.tableBox.settings.currentPageNumber;
 const getDataErrors = (state) => state.tableBox.errors;
 
-export const descriptionToSortedInfoSelector = createSelector(
+export const getSortSettingSelector = createSelector(
   getSortSetting,
-  (sortSettings) => {
-    const { order, types } = getSortSettingArrays(sortSettings);
-    const orderToString = order.reduce((acc, head, i) => `${acc} ${acc === '' ? '' : '->'} ${head}-${types[i]}`, '');
-    return `Sorted by: ${orderToString}`;
+  ({ order, type }) => {
+    const types = order.map((columnName) => type[columnName]);
+    return { order, types };
   },
 );
-export const maxPageNumberSelector = (tableType) => createSelector(
+
+const filtredTableDatasSelector = (tableType) => createSelector(
   getTableData(tableType),
-  getNumberOfLineDisplayed,
-  (tableDatas, numOfLineDisp) => Math.ceil(tableDatas.length / numOfLineDisp),
-);
-const SortedTableDatasSelector = (tableType) => createSelector(
-  getTableData(tableType),
-  getSortSetting,
-  (tabledata, sortSettings) => {
-    const { order, types } = getSortSettingArrays(sortSettings);
-    return _.orderBy(tabledata, order, types);
+  getFilterSetting,
+  (tabledata, { search, head }) => {
+    const targetText = _.toLower(search);
+    const filtredData = tabledata.filter((item) => _.toLower(item[head]).includes(targetText));
+    return filtredData;
   },
+);
+const sortedTableDatasSelector = (tableType) => createSelector(
+  filtredTableDatasSelector(tableType),
+  getSortSettingSelector,
+  (tabledata, { order, types }) => _.orderBy(tabledata, order, types),
 );
 export const currentPageDataSliceSelector = (tableType) => createSelector(
-  SortedTableDatasSelector(tableType),
-  getNumberOfLineDisplayed,
+  sortedTableDatasSelector(tableType),
+  getNumberOfRowsDisplayed,
   getCurrentPageNumber,
-  (sortedData, numOfLineDisp, currentPageNum) => {
-    const startDisp = currentPageNum * numOfLineDisp - numOfLineDisp;
-    const finishDisp = currentPageNum * numOfLineDisp;
+  (sortedData, numOfRowsDisp, currentPageNum) => {
+    const startDisp = currentPageNum * numOfRowsDisp - numOfRowsDisp;
+    const finishDisp = currentPageNum * numOfRowsDisp;
     return sortedData.slice(startDisp, finishDisp);
   },
 );
 export const errorsSelector = createSelector(
   getDataErrors,
   (errors) => (Object.entries(errors).length !== 0 ? Object.entries(errors) : null),
+);
+export const maxPageNumberSelector = (tableType) => createSelector(
+  filtredTableDatasSelector(tableType),
+  getNumberOfRowsDisplayed,
+  (tableDatas, numOfRowsDisp) => Math.ceil(tableDatas.length / numOfRowsDisp) || 1,
 );

@@ -1,29 +1,103 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
-import { SortedInfoBox, TableControlBox } from './TableControl';
+import { PageControlBox, ButtonsControlTheNumberOfRowsBox } from './TableControl';
+import { defaultIcon, upIcon, downIcon } from './icons';
+import { changeSorting } from '../slices';
+import loading from '../assets/img/loading.gif';
+import Search from './Search';
+import SortedControlBox from './SortedControl';
 // ------------------------------------------------------------------------------------------
+const TableControlBox = () => (
+  <div className="d-flex justify-content-between border">
+    <Search />
+    <ButtonsControlTheNumberOfRowsBox />
+  </div>
+);
+// ------------------------------------------------------------------------------------------
+const getCurrentIcon = (sortType) => {
+  switch (sortType) {
+    case 'asc':
+      return downIcon;
+    case 'desc':
+      return upIcon;
+    default:
+      return defaultIcon;
+  }
+};
 const mapStateToPropsForTable = (state) => ({
   currentData: currentPageDataSliceSelector(state.navbarBox.selectedTab)(state),
   headings: state.tableBox.headings,
   errors: errorsSelector(state),
+  sortedInfo: state.tableBox.sort.type,
 });
-const TheTable = (props) => {
+const actionCreatorsForHeader = { changeSorting };
+const Header = (props) => {
+  const {
+    headings,
+    sortedInfo,
+    changeSorting: change,
+  } = props;
+  const handlerChangeSorting = (headType) => (event) => {
+    event.preventDefault();
+    change({ head: headType });
+  };
+  return (headings
+    .map((head) => (
+      <th onClick={handlerChangeSorting(head)} key={head}>
+        <div className="float-left">
+          {head}
+        </div>
+        <div className="float-right">
+          {getCurrentIcon(sortedInfo[head])}
+        </div>
+      </th>
+    ))
+  );
+};
+const HeaderBox = connect(
+  mapStateToPropsForTable,
+  actionCreatorsForHeader,
+)(Header);
+// ------------------------------------------------------------------------------------------
+const Rows = (props) => {
   const { currentData, headings } = props;
-  const renderLine = () => currentData.map((person) => (
-    <tr key={person.id}>
-      {headings.map((head) => (
-        <td key={`p-${person[head]}`}>
-          {person[head]}
-        </td>
-      ))}
-    </tr>
-  ));
+  if (currentData.length === 0) {
+    return (<tr><td colSpan={headings.length}>None data match</td></tr>);
+  }
   return (
-    <>
-      <SortedInfoBox />
+    currentData
+      .map((person) => (
+        <tr key={_.uniqueId()}>
+          {headings.map((head) => (
+            <td key={`p-${person[head]}`}>
+              {person[head]}
+            </td>
+          ))}
+      </tr>
+      ))
+  );
+};
+const RowsBox = connect(mapStateToPropsForTable)(Rows);
+// ------------------------------------------------------------------------------------------
+const geDataDownloadingStatus = (type) => (state) => state.tableBox.statuses[type];
+const mapStateToPropsStatus = (state) => ({
+  status: geDataDownloadingStatus(state.navbarBox.selectedTab)(state),
+});
+const TheTable = ({ status }) => {
+  if (status !== 'success') {
+    return (
+      <div className="min-vh-100 d-flex justify-content-center align-items-center">
+          <img className="w-25" src={loading}/>
+      </div>
+    );
+  }
+  return (<>
+      <SortedControlBox />
       <TableControlBox />
+      <PageControlBox />
       <Table
         striped
         bordered
@@ -33,18 +107,18 @@ const TheTable = (props) => {
       >
         <thead>
           <tr>
-            {headings.map((head) => <th key={head}>{head}</th>)}
+            <HeaderBox />
           </tr>
         </thead>
         <tbody>
-          {renderLine()}
+          <RowsBox />
         </tbody>
       </Table>
-      <TableControlBox />
+      <PageControlBox />
     </>
   );
 };
-const TableBox = connect(mapStateToPropsForTable)(TheTable);
+const TableBox = connect(mapStateToPropsStatus)(TheTable);
 
 const mapStateToPropsForDisplay = (state) => ({
   currentTab: state.navbarBox.selectedTab,

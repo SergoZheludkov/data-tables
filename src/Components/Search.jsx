@@ -2,16 +2,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useFormik } from 'formik';
 import Button from 'react-bootstrap/Button';
+import { filterData } from '../slices';
 
-const Search = () => {
-  // -------------------------Formik-------------------------
+const mapStateToPropsForSearch = (state) => ({
+  headings: state.tableBox.headings,
+});
+const actionCreatorsForHeader = { filterData };
+const Search = (props) => {
+  const {
+    headings,
+    filterData: filter,
+  } = props;
   const formik = useFormik({
     initialValues: {
       search: '',
+      head: headings[0],
     },
-    // onSubmit: (values) => {
-
-    // },
+    onSubmit: (values) => {
+      filter({ filterSettings: values });
+    },
   });
 
   return (
@@ -25,7 +34,17 @@ const Search = () => {
         disabled={false}
         value={formik.values.message}
         placeholder="Search"
-        />
+      />
+      <select
+        id="head"
+        name="head"
+        className="form-control w-50"
+        onChange={formik.handleChange}
+        disabled={false}
+        value={formik.values.head}
+      >
+        {headings.map((head) => <option key={head} value={head}>{head}</option>)}
+      </select>
       <Button type="submit" disabled={false} variant="primary">
         Find
       </Button>
@@ -33,4 +52,7 @@ const Search = () => {
   );
 };
 
-export default connect()(Search);
+export default connect(
+  mapStateToPropsForSearch,
+  actionCreatorsForHeader,
+)(Search);

@@ -28,7 +28,7 @@ const localData = {
 
 const getTableData = ([type, url]) => axios.get(url)
   .then(({ data }) => {
-    store.dispatch({ type: 'tableBox/updateData', payload: { type, data } });
+    store.dispatch({ type: 'tableBox/updateData', payload: { type, data, status: 'success' } });
   })
   .catch((error) => {
     store.dispatch({ type: 'tableBox/updateError', payload: { type, error } });
@@ -36,7 +36,8 @@ const getTableData = ([type, url]) => axios.get(url)
 
 const loadTablesData = async (dataMapper) => {
   const dataMapperArray = Object.entries(dataMapper);
-  dataMapperArray.forEach(getTableData);
+  Promise.all(dataMapperArray.map(getTableData))
+    .then(() => console.log('all data download'));
 };
 
 loadTablesData(dataRequestMapper);
