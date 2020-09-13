@@ -10,31 +10,6 @@ import {
   changeNumberOfRowsDisplayed,
 } from '../slices';
 // ------------------------------------------------------------------------------------------
-/* const mapStateToPropsForSortedInfo = (state) => ({
-  description: descriptionToSortedInfoSelector(state),
-});
-const actionCreatorsForSortedInfo = { sortReset };
-const MenuForSortedInfo = (props) => {
-  const {
-    description,
-    sortReset: reset,
-  } = props;
-  const handlerReset = (event) => {
-    event.preventDefault();
-    reset();
-  };
-  return (
-    <div className="d-flex flex-fill justify-content-between align-items-center p-2 border-right">
-      {description}
-      <Button onClick={handlerReset} variant="primary">Reset</Button>
-    </div>
-  );
-};
-const MenuForSortedInfoBox = connect(
-  mapStateToPropsForSortedInfo,
-  actionCreatorsForSortedInfo,
-)(MenuForSortedInfo); */
-// ------------------------------------------------------------------------------------------
 const mapStateToPropsForTheNumberOfRows = (state) => ({
   numberOfRowsDisplayed: state.tableBox.settings.numberOfRowsDisplayed,
   rowsDisplayOptions: state.tableBox.settings.rowsDisplayOptions,

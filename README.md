@@ -1,14 +1,8 @@
-Test project to Future ![Node CI](https://github.com/SergoZheludkov/data-tables/workflows/Node%20CI/badge.svg)
+My start setup
 ========================
-
 
 Technology stack
 ------------------------
 
 * React
-* Redux (Redux toolkit)
-* Reselect
-* Formik
-* Axios
-* Bootstrap
-* Lodash
+* Redux
