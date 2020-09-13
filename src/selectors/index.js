@@ -21,7 +21,7 @@ const filtredTableDatasSelector = (tableType) => createSelector(
   getTableData(tableType),
   getFilterSetting,
   (tabledata, { search, head }) => {
-    const targetText = _.toLower(search);
+    const targetText = _.toLower(search.trim());
     const filtredData = tabledata.filter((item) => _.toLower(item[head]).includes(targetText));
     return filtredData;
   },

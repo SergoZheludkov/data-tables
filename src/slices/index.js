@@ -26,7 +26,30 @@ const navbarSlice = createSlice({
 });
 
 export const { changeTable } = navbarSlice.actions;
-// -------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------
+const addEntryStatusMapper = {
+  closed: 'opened',
+  opened: 'closed',
+};
+
+const addEntryСontrolBoxSlice = createSlice({
+  name: 'addEntryСontrolBox',
+  initialState: {
+    status: 'closed',
+  },
+  reducers: {
+    changeStatus: (state) => {
+      state.status = addEntryStatusMapper[state.status];
+    },
+  },
+});
+export const { changeStatus } = addEntryСontrolBoxSlice.actions;
+// ------------------------------------------------------------------------------------------
+// const emptyInfoBoxSlice = createSlice({
+
+// });
+// ------------------------------------------------------------------------------------------
 const tableBoxSlice = createSlice({
   name: 'tableBox',
   initialState: {
@@ -62,6 +85,9 @@ const tableBoxSlice = createSlice({
       state.statuses[type] = status;
       state.data[type] = data;
     },
+    addEntryToData: (state, { payload }) => {
+      state.data[payload.dataType].unshift(payload.newEntry);
+    },
     updateError: (state, { payload }) => {
       state.error = payload.error;
     },
@@ -73,6 +99,9 @@ const tableBoxSlice = createSlice({
     },
     sortReset: (state) => {
       state.sort = { order: [], type: {} };
+    },
+    filteredReset: (state) => {
+      state.filtered = { search: '', head: '' };
     },
     removeSortedType: (state, { payload }) => {
       state.sort.order = _.without(state.sort.order, payload.type);
@@ -94,15 +123,18 @@ const tableBoxSlice = createSlice({
   },
   extraReducers: {
     'navbar/changeTable': (state, action) => {
+      console.log(action.payload);
       state.data = action.payload.type;
     },
   },
 });
 export const {
+  addEntryToData,
   nextPage,
   prevPage,
   setCurrentPage,
   sortReset,
+  filteredReset,
   removeSortedType,
   filterData,
   changeNumberOfRowsDisplayed,
@@ -112,4 +144,5 @@ export const {
 export default combineReducers({
   navbarBox: navbarSlice.reducer,
   tableBox: tableBoxSlice.reducer,
+  addEntryСontrolBox: addEntryСontrolBoxSlice.reducer,
 });

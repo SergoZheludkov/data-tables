@@ -9,11 +9,14 @@ import { changeSorting } from '../slices';
 import loading from '../assets/img/loading.gif';
 import Search from './Search';
 import SortedControlBox from './SortedControl';
+import { AddEntryControlBox, AddEntryFormBox } from './AddEntryControlBox';
+
 // ------------------------------------------------------------------------------------------
 const TableControlBox = () => (
-  <div className="d-flex justify-content-between border">
+  <div className="d-flex border-right border-left">
     <Search />
     <ButtonsControlTheNumberOfRowsBox />
+    <AddEntryControlBox />
   </div>
 );
 // ------------------------------------------------------------------------------------------
@@ -97,6 +100,7 @@ const TheTable = ({ status }) => {
   return (<>
       <SortedControlBox />
       <TableControlBox />
+      <AddEntryFormBox />
       <PageControlBox />
       <Table
         striped

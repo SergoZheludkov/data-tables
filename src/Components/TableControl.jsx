@@ -26,7 +26,8 @@ const ButtonsControlTheNumberOfRows = (props) => {
     changeNumber({ numberOfRows });
   };
   return (
-    <div className="d-flex justify-content-end p-2 border-right">
+    <div className="p-2 border-right border-bottom">
+      <div className="text-center">Select row count</div>
       <ButtonGroup aria-label="Basic example">
       {rowsDisplayOptions.map((option) => (
         <Button
