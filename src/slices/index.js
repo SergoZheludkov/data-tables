@@ -28,7 +28,7 @@ const navbarSlice = createSlice({
 export const { changeTable } = navbarSlice.actions;
 
 // ------------------------------------------------------------------------------------------
-const addEntryStatusMapper = {
+const openClosedStatusMapper = {
   closed: 'opened',
   opened: 'closed',
 };
@@ -39,16 +39,73 @@ const addEntryСontrolBoxSlice = createSlice({
     status: 'closed',
   },
   reducers: {
-    changeStatus: (state) => {
-      state.status = addEntryStatusMapper[state.status];
+    changeAddEntryСontrolBoxStatus: (state) => {
+      state.status = openClosedStatusMapper[state.status];
     },
   },
 });
-export const { changeStatus } = addEntryСontrolBoxSlice.actions;
+export const { changeAddEntryСontrolBoxStatus } = addEntryСontrolBoxSlice.actions;
 // ------------------------------------------------------------------------------------------
-// const emptyInfoBoxSlice = createSlice({
-
-// });
+const emptyInfoBoxSlice = createSlice({
+  name: 'emptyInfoBox',
+  initialState: {
+    status: 'closed',
+    selectedEmptyId: null,
+  },
+  reducers: {
+    changeEmptyInfoBoxStatus: (state) => {
+      state.status = openClosedStatusMapper[state.status];
+    },
+    setSelectedEmptyId: (state, { payload }) => {
+      state.status = 'opened';
+      state.selectedEmptyId = payload.id;
+    },
+  },
+});
+export const { changeEmptyInfoBoxStatus, setSelectedEmptyId } = emptyInfoBoxSlice.actions;
+// ------------------------------------------------------------------------------------------
+const searchSlice = createSlice({
+  name: 'search',
+  initialState: {
+    searchText: '',
+    selectedHeader: '',
+  },
+  reducers: {
+    filterData: (state, { payload }) => {
+      state.searchText = payload.searchText;
+      state.selectedHeader = payload.selectedHeader;
+    },
+    filteredReset: (state) => {
+      state.searchText = '';
+      state.selectedHeader = '';
+    },
+  },
+});
+export const { filterData, filteredReset } = searchSlice.actions;
+// ------------------------------------------------------------------------------------------
+const sortingSlice = createSlice({
+  name: 'sorting',
+  initialState: {
+    order: [],
+    types: {},
+  },
+  reducers: {
+    sortReset: (state) => {
+      state.order = [];
+      state.types = {};
+    },
+    removeSortedType: (state, { payload }) => {
+      state.order = _.without(state.order, payload.header);
+      state.types = _.omit(state.types, [payload.header]);
+    },
+    changeSorting: (state, { payload: { header } }) => {
+      const checkedOrder = state.order.includes(header);
+      if (!checkedOrder) state.order.push(header);
+      state.types[header] = state.types[header] === 'asc' ? 'desc' : 'asc';
+    },
+  },
+});
+export const { sortReset, removeSortedType, changeSorting } = sortingSlice.actions;
 // ------------------------------------------------------------------------------------------
 const tableBoxSlice = createSlice({
   name: 'tableBox',
@@ -65,18 +122,17 @@ const tableBoxSlice = createSlice({
       'email',
       'phone',
     ],
+    tableHeaders: [
+      'id',
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+    ],
     settings: {
       currentPageNumber: 1,
       numberOfRowsDisplayed: 50,
       rowsDisplayOptions: [50, 100, 200],
-    },
-    sort: {
-      order: [],
-      type: {},
-    },
-    filtered: {
-      search: '',
-      head: '',
     },
   },
   reducers: {
@@ -97,34 +153,14 @@ const tableBoxSlice = createSlice({
     prevPage: (state) => {
       state.settings.currentPageNumber -= 1;
     },
-    sortReset: (state) => {
-      state.sort = { order: [], type: {} };
-    },
-    filteredReset: (state) => {
-      state.filtered = { search: '', head: '' };
-    },
-    removeSortedType: (state, { payload }) => {
-      state.sort.order = _.without(state.sort.order, payload.type);
-      state.sort.type = _.omit(state.sort.type, [payload.type]);
-    },
     changeNumberOfRowsDisplayed: (state, { payload }) => {
       state.settings.numberOfRowsDisplayed = payload.numberOfRows;
       state.settings.currentPageNumber = 1;
     },
-    changeSorting: (state, { payload }) => {
-      const checkedOrder = state.sort.order.includes(payload.head);
-      if (!checkedOrder) state.sort.order.push(payload.head);
-      state.sort.type[payload.head] = state.sort.type[payload.head] === 'asc' ? 'desc' : 'asc';
-    },
-    filterData: (state, { payload }) => {
-      state.filtered = payload.filterSettings;
-      state.settings.currentPageNumber = 1;
-    },
   },
   extraReducers: {
-    'navbar/changeTable': (state, action) => {
-      console.log(action.payload);
-      state.data = action.payload.type;
+    'search/filterData': (state) => {
+      state.settings.currentPageNumber = 1;
     },
   },
 });
@@ -133,16 +169,14 @@ export const {
   nextPage,
   prevPage,
   setCurrentPage,
-  sortReset,
-  filteredReset,
-  removeSortedType,
-  filterData,
   changeNumberOfRowsDisplayed,
-  changeSorting,
 } = tableBoxSlice.actions;
 
 export default combineReducers({
   navbarBox: navbarSlice.reducer,
   tableBox: tableBoxSlice.reducer,
   addEntryСontrolBox: addEntryСontrolBoxSlice.reducer,
+  emptyInfoBox: emptyInfoBoxSlice.reducer,
+  search: searchSlice.reducer,
+  sorting: sortingSlice.reducer,
 });

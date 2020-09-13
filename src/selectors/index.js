@@ -3,26 +3,28 @@ import _ from 'lodash';
 
 // ------------------------------------------------------------------------------------------
 const getTableData = (type) => (state) => state.tableBox.data[type] || [];
-const getFilterSetting = (state) => state.tableBox.filtered;
-const getSortSetting = (state) => state.tableBox.sort;
+const getFilterSetting = (state) => state.search;
+const getSortSetting = (state) => state.sorting;
 const getNumberOfRowsDisplayed = (state) => state.tableBox.settings.numberOfRowsDisplayed;
 const getCurrentPageNumber = (state) => state.tableBox.settings.currentPageNumber;
+const getSelectedEmptyId = (state) => state.emptyInfoBox.selectedEmptyId;
 const getDataErrors = (state) => state.tableBox.errors;
 
 export const getSortSettingSelector = createSelector(
   getSortSetting,
-  ({ order, type }) => {
-    const types = order.map((columnName) => type[columnName]);
-    return { order, types };
+  ({ order, types }) => {
+    const typesArray = order.map((columnName) => types[columnName]);
+    return { order, types: typesArray };
   },
 );
 
 const filtredTableDatasSelector = (tableType) => createSelector(
   getTableData(tableType),
   getFilterSetting,
-  (tabledata, { search, head }) => {
-    const targetText = _.toLower(search.trim());
-    const filtredData = tabledata.filter((item) => _.toLower(item[head]).includes(targetText));
+  (tabledata, { searchText, selectedHeader }) => {
+    const targetText = _.toLower(searchText.trim());
+    const filtredData = tabledata
+      .filter((item) => _.toLower(item[selectedHeader]).includes(targetText));
     return filtredData;
   },
 );
@@ -40,6 +42,11 @@ export const currentPageDataSliceSelector = (tableType) => createSelector(
     const finishDisp = currentPageNum * numOfRowsDisp;
     return sortedData.slice(startDisp, finishDisp);
   },
+);
+export const selectedEmptyDataSelector = (tableType) => createSelector(
+  currentPageDataSliceSelector(tableType),
+  getSelectedEmptyId,
+  (currentPageData, selectedEmptyId) => _.find(currentPageData, { id: selectedEmptyId }),
 );
 export const errorsSelector = createSelector(
   getDataErrors,

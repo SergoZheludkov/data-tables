@@ -5,10 +5,11 @@ import Table from 'react-bootstrap/Table';
 import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
 import { PageControlBox, ButtonsControlTheNumberOfRowsBox } from './TableControl';
 import { defaultIcon, upIcon, downIcon } from './icons';
-import { changeSorting } from '../slices';
+import { changeSorting, setSelectedEmptyId } from '../slices';
 import loading from '../assets/img/loading.gif';
 import Search from './Search';
 import SortedControlBox from './SortedControl';
+import EmptyInfoBox from './EmptyInfoBox';
 import { AddEntryControlBox, AddEntryFormBox } from './AddEntryControlBox';
 
 // ------------------------------------------------------------------------------------------
@@ -32,29 +33,29 @@ const getCurrentIcon = (sortType) => {
 };
 const mapStateToPropsForTable = (state) => ({
   currentData: currentPageDataSliceSelector(state.navbarBox.selectedTab)(state),
-  headings: state.tableBox.headings,
+  tableHeaders: state.tableBox.tableHeaders,
   errors: errorsSelector(state),
-  sortedInfo: state.tableBox.sort.type,
+  sortedInfo: state.sorting.types,
 });
 const actionCreatorsForHeader = { changeSorting };
 const Header = (props) => {
   const {
-    headings,
+    tableHeaders,
     sortedInfo,
     changeSorting: change,
   } = props;
   const handlerChangeSorting = (headType) => (event) => {
     event.preventDefault();
-    change({ head: headType });
+    change({ header: headType });
   };
-  return (headings
-    .map((head) => (
-      <th onClick={handlerChangeSorting(head)} key={head}>
+  return (tableHeaders
+    .map((header) => (
+      <th onClick={handlerChangeSorting(header)} key={header}>
         <div className="float-left">
-          {head}
+          {header}
         </div>
         <div className="float-right">
-          {getCurrentIcon(sortedInfo[head])}
+          {getCurrentIcon(sortedInfo[header])}
         </div>
       </th>
     ))
@@ -65,25 +66,37 @@ const HeaderBox = connect(
   actionCreatorsForHeader,
 )(Header);
 // ------------------------------------------------------------------------------------------
+const actionCreatorsForRows = { setSelectedEmptyId };
 const Rows = (props) => {
-  const { currentData, headings } = props;
+  const {
+    currentData,
+    tableHeaders,
+    setSelectedEmptyId: addToEmptyInfo,
+  } = props;
   if (currentData.length === 0) {
-    return (<tr><td colSpan={headings.length}>None data match</td></tr>);
+    return (<tr><td colSpan={tableHeaders.length}>None data match</td></tr>);
   }
+  const handleClickRow = (id) => (event) => {
+    event.preventDefault();
+    addToEmptyInfo({ id });
+  };
   return (
     currentData
       .map((person) => (
-        <tr key={_.uniqueId()}>
-          {headings.map((head) => (
-            <td key={`p-${person[head]}`}>
-              {person[head]}
+        <tr key={_.uniqueId()} onClick={handleClickRow(person.id)}>
+          {tableHeaders.map((header) => (
+            <td key={`p-${person[header]}`}>
+              {person[header]}
             </td>
           ))}
       </tr>
       ))
   );
 };
-const RowsBox = connect(mapStateToPropsForTable)(Rows);
+const RowsBox = connect(
+  mapStateToPropsForTable,
+  actionCreatorsForRows,
+)(Rows);
 // ------------------------------------------------------------------------------------------
 const geDataDownloadingStatus = (type) => (state) => state.tableBox.statuses[type];
 const mapStateToPropsStatus = (state) => ({
@@ -119,6 +132,7 @@ const TheTable = ({ status }) => {
         </tbody>
       </Table>
       <PageControlBox />
+      <EmptyInfoBox />
     </>
   );
 };

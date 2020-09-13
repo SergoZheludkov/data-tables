@@ -5,11 +5,11 @@ import * as Yup from 'yup';
 import cn from 'classnames';
 import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
-import { changeStatus, addEntryToData } from '../slices';
+import { changeAddEntryСontrolBoxStatus, addEntryToData } from '../slices';
 import getObjectWithTrimedValues from '../utilits';
 
 const mapStateToPropsAddEntry = (state) => ({
-  status: state.addEntryСontrolBoxSlice.status,
+  status: state.addEntryСontrolBox.status,
   headings: state.tableBox.headings,
   dataType: state.navbarBox.selectedTab,
 });
@@ -51,6 +51,7 @@ const AddEntryForm = (props) => {
     });
     const textDivClasses = cn({
       'ml-2': true,
+      'text-nowrap': true,
       'text-danger': formik.errors[head],
     });
     const inputBoxClasses = cn({
@@ -60,7 +61,13 @@ const AddEntryForm = (props) => {
     const inputHeading = !formik.errors[head] ? head : _.capitalize(formik.errors[head]);
     return (
       <div key={`add-entry-${head}`} className={inputBoxClasses}>
-        <div className={textDivClasses}>{inputHeading}</div>
+        <label
+          htmlFor={head}
+          className={textDivClasses}
+        >
+          {inputHeading}
+        </label>
+        <div className={textDivClasses}></div>
         <input
           id={head}
           name={head}
@@ -96,13 +103,13 @@ export const AddEntryFormBox = connect(
   actionCreatorsForAddEntryForm,
 )(AddEntryForm);
 // ------------------------------------------------------------------------------------------
-const actionCreatorsForAddEntry = { changeStatus };
+const actionCreatorsForAddEntry = { changeAddEntryСontrolBoxStatus };
 
 const AddEntryControl = (props) => {
-  const { status, changeStatus: change } = props;
+  const { status, changeAddEntryСontrolBoxStatus: changeStatus } = props;
   const handlerChangeStatus = (event) => {
     event.preventDefault();
-    change();
+    changeStatus();
   };
   const divClasses = cn({
     'p-2': true,

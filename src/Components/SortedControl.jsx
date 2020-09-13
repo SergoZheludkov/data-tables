@@ -4,42 +4,42 @@ import Button from 'react-bootstrap/Button';
 import { sortReset, removeSortedType } from '../slices';
 import { closeIcon, rightArrow } from './icons';
 
-const mapStateToPropsForSortedSettList = (state) => ({
-  settings: state.tableBox.sort,
-});
-const actionCreatorsForListSettingSort = { removeSortedType };
-const ListSettingSort = ({ settings, removeSortedType: remove }) => {
-  const { order, type } = settings;
-  const handlerClose = (head) => (event) => {
+const mapStateToPropsForListSettigsOfSort = (state) => ({ settings: state.sorting });
+const actionCreatorsForListSettingOfSort = { removeSortedType };
+
+const ListSettingOfSort = (props) => {
+  const { settings, removeSortedType: remove } = props;
+  const { order, types } = settings;
+  const handlerClose = (type) => (event) => {
     event.preventDefault();
-    remove({ type: head });
+    remove({ header: type });
   };
-  const settingDivs = order.map((head, i) => (
-    <React.Fragment key={`sortControl-${head}`}>
+  const settingDivs = order.map((header, i) => (
+    <React.Fragment key={`sortedlist-${header}`}>
     {i !== 0 && <div className="p-1 mx-1">{rightArrow}</div>}
-    <div
-      className="border p-1 mx-1 rounded-lg"
-    >
-      <span><b>{head}</b>-{type[head]}</span>
-      <span onClick={handlerClose(head)}>
+    <div className="border p-1 mx-1 rounded-lg">
+      <span>
+        <b>{header}</b>-{types[header]}
+      </span>
+      <span onClick={handlerClose(header)}>
         {closeIcon}
       </span>
     </div>
     </React.Fragment>
   ));
-  const displayedSort = settingDivs.length > 0 ? settingDivs : <div className="mx-2">Not Sorted</div>;
+  const displayedSorting = settingDivs.length > 0 ? settingDivs : <div className="mx-2">Not Sorted</div>;
   return (
     <div className="d-flex align-items-center">
       <div>Sorted by:</div>
-      {displayedSort}
+      {displayedSorting}
     </div>);
 };
-const ListSettingSortBox = connect(
-  mapStateToPropsForSortedSettList,
-  actionCreatorsForListSettingSort,
-)(ListSettingSort);
+const ListSettingOfSortBox = connect(
+  mapStateToPropsForListSettigsOfSort,
+  actionCreatorsForListSettingOfSort,
+)(ListSettingOfSort);
 
-const actionCreatorsForSortedInfo = { sortReset };
+const actionCreatorsForSortedControl = { sortReset };
 const SortedControl = (props) => {
   const {
     sortReset: reset,
@@ -52,7 +52,7 @@ const SortedControl = (props) => {
   const resetDisabled = settings.order.length < 1;
   return (
     <div className="d-flex flex-fill justify-content-between align-items-center p-2 border">
-      <ListSettingSortBox />
+      <ListSettingOfSortBox />
       <Button
         onClick={handlerReset}
         disabled={resetDisabled}
@@ -64,8 +64,8 @@ const SortedControl = (props) => {
   );
 };
 const SortedControlBox = connect(
-  mapStateToPropsForSortedSettList,
-  actionCreatorsForSortedInfo,
+  mapStateToPropsForListSettigsOfSort,
+  actionCreatorsForSortedControl,
 )(SortedControl);
 
 export default SortedControlBox;
