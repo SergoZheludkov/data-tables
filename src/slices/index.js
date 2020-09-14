@@ -30,14 +30,12 @@ const dataSlice = createSlice({
       state.downloads[type] = data;
     },
     downloadLocalData: (state, { payload }) => {
-      console.log(payload);
       state.statuses[payload.type] = 'success';
       state.downloads[payload.type] = localDataMapper[payload.type];
       state.errors[payload.type] = null;
     },
     updateError: (state, { payload }) => {
       const { type, status } = payload;
-      console.log(status);
       state.statuses[type] = status;
       state.errors[type] = payload.error;
     },
