@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import cn from 'classnames';
 import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
-import { changeAddEntryСontrolBoxStatus, addEntryToData } from '../slices';
+import { addEntryToData } from '../slices';
 import getObjectWithTrimedValues from '../utilits';
 
-const mapStateToPropsAddEntry = (state) => ({
+const mapStateToPropsAddEntryForm = (state) => ({
   status: state.addEntryСontrol.status,
   tableHeaders: state.table.tableHeaders,
   dataType: state.navbar.selectedTab,
@@ -96,38 +96,7 @@ const AddEntryForm = (props) => {
     </div>
   );
 };
-export const AddEntryFormBox = connect(
-  mapStateToPropsAddEntry,
+export default connect(
+  mapStateToPropsAddEntryForm,
   actionCreatorsForAddEntryForm,
 )(AddEntryForm);
-// ------------------------------------------------------------------------------------------
-const actionCreatorsForAddEntry = { changeAddEntryСontrolBoxStatus };
-
-const AddEntryControl = (props) => {
-  const { status, changeAddEntryСontrolBoxStatus: changeStatus } = props;
-  const handlerChangeStatus = (event) => {
-    event.preventDefault();
-    changeStatus();
-  };
-  const divClasses = cn({
-    'align-self-end': true,
-    'p-2': true,
-    'flex-fill': true,
-    'text-nowrap': true,
-    'border-bottom': status === 'closed',
-    'bg-light': status === 'opened',
-  });
-  return (
-    <div className={divClasses}>
-      <div className="text-center">Add Entry</div>
-      <Button onClick={handlerChangeStatus} className="w-100 " variant="info">
-        {status === 'closed' ? 'Open form' : 'Close'}
-      </Button>
-    </div>
-  );
-};
-
-export const AddEntryControlBox = connect(
-  mapStateToPropsAddEntry,
-  actionCreatorsForAddEntry,
-)(AddEntryControl);

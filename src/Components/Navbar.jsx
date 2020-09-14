@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-// import cn from 'classnames';
 import Navbar from 'react-bootstrap/Navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { changeTable } from '../slices';
-// import { spinner } from "./icons";
 
 const mapStateToProps = ({ navbar: { elements, selectedTab } }) => ({ elements, selectedTab });
 const actionCreators = { changeTable };

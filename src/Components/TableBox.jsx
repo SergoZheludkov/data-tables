@@ -5,11 +5,14 @@ import Table from 'react-bootstrap/Table';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
-import { PageControlBox, ButtonsControlTheNumberOfRowsBox } from './TableControl';
-import { AddEntryControlBox, AddEntryFormBox } from './AddEntryControlBox';
+import Pagination from './Pagination';
+import ButtonsControlTheNumberOfRowsBox from './ButtonsControlTheNumberOfRows';
+import AddEntryControlBox from './AddEntryControl';
+import AddEntryForm from './AddEntryForm';
 import SortedControlBox from './SortedControl';
 import EmptyInfoBox from './EmptyInfoBox';
 import Search from './Search';
+import HomePage from './HomePage';
 import { changeSorting, setSelectedEmptyId, downloadLocalData } from '../slices';
 import { defaultIcon, upIcon, downIcon } from './icons';
 import loading from '../assets/img/loading.gif';
@@ -115,8 +118,8 @@ const TheTable = ({ status }) => {
     <>
       <SortedControlBox />
       <TableControlBox />
-      <AddEntryFormBox />
-      <PageControlBox />
+      <AddEntryForm />
+      <Pagination />
       <Table
         striped
         bordered
@@ -133,7 +136,7 @@ const TheTable = ({ status }) => {
           <RowsBox />
         </tbody>
       </Table>
-      <PageControlBox />
+      <Pagination />
       <EmptyInfoBox />
     </>
   );
@@ -175,7 +178,7 @@ const DisplayBox = (props) => {
   }
   return (
     <div>
-      {currentTab === 'home' && <p>Hello, man!</p>}
+      {currentTab === 'home' && <HomePage />}
       {currentTab !== 'home' && <TableBox />}
     </div>
   );
