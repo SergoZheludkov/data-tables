@@ -12,8 +12,8 @@ const store = configureStore({
 });
 
 const dataRequestMapper = {
-  small: 'http://www.filtext.com/', // 'rows=32&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}',
-  large: 'http://www.filtext.com/', // 'rows=1000&id={number|1000}&firstName={firstName}&delay=3&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}',
+  small: 'http://www.filtext.com/rows=32&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}',
+  large: 'http://www.filtext.com/rows=1000&id={number|1000}&firstName={firstName}&delay=3&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}',
 };
 
 const getTableData = ([type, url]) => axios.get(url)
@@ -29,7 +29,7 @@ const loadTablesData = async (dataMapper) => {
   Promise.all(dataMapperArray.map(getTableData))
     .then(() => console.log('all data download'));
 };
-// console.log('smalldata', smalldata);
+
 loadTablesData(dataRequestMapper);
 render(
   <Provider store={store}>
