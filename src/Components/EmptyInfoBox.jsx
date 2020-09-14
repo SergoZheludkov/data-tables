@@ -4,24 +4,17 @@ import { connect } from 'react-redux';
 import { selectedEmptyDataSelector } from '../selectors';
 
 const mapToStatePropsForEmptyInfo = (state) => ({
-  status: state.emptyInfoBox.status,
-  selectedEmptyData: selectedEmptyDataSelector(state.navbarBox.selectedTab)(state),
+  status: state.emptyInfo.status,
+  selectedEmptyData: selectedEmptyDataSelector(state.navbar.selectedTab)(state),
 });
 const EmptyInfo = (props) => {
   const { status, selectedEmptyData } = props;
   if (status === 'closed') return null;
   const {
-    firstName,
-    lastName,
-    description,
-    address,
+    firstName, lastName, description, address,
   } = selectedEmptyData;
-  console.log(description);
   const {
-    city,
-    state,
-    streetAddress,
-    zip,
+    city, state, streetAddress, zip,
   } = address;
   return (
     <div className="d-flex flex-column border">
@@ -33,6 +26,7 @@ const EmptyInfo = (props) => {
         className="form-control w-50"
         rows="5"
         type="textarea"
+        readOnly
         value={description}
       />
       Адрес проживания: <b>{streetAddress}</b>

@@ -11,8 +11,8 @@ import {
 } from '../slices';
 // ------------------------------------------------------------------------------------------
 const mapStateToPropsForTheNumberOfRows = (state) => ({
-  numberOfRowsDisplayed: state.tableBox.settings.numberOfRowsDisplayed,
-  rowsDisplayOptions: state.tableBox.settings.rowsDisplayOptions,
+  numberOfRowsDisplayed: state.table.settings.numberOfRowsDisplayed,
+  rowsDisplayOptions: state.table.settings.rowsDisplayOptions,
 });
 const actionCreatorsForTheNumberOfRows = { changeNumberOfRowsDisplayed };
 const ButtonsControlTheNumberOfRows = (props) => {
@@ -26,7 +26,7 @@ const ButtonsControlTheNumberOfRows = (props) => {
     changeNumber({ numberOfRows });
   };
   return (
-    <div className="p-2 border-right border-bottom">
+    <div className="align-self-end p-2 border-right border-bottom">
       <div className="text-center">Select row count</div>
       <ButtonGroup aria-label="Basic example">
       {rowsDisplayOptions.map((option) => (
@@ -50,8 +50,8 @@ export const ButtonsControlTheNumberOfRowsBox = connect(
 // ------------------------------------------------------------------------------------------
 // div with information about number page and with buttons controlling the table page
 const mapStateToPropsForTableControl = (state) => ({
-  currentPageNumber: state.tableBox.settings.currentPageNumber,
-  maxPageNumber: maxPageNumberSelector(state.navbarBox.selectedTab)(state),
+  currentPageNumber: state.table.settings.currentPageNumber,
+  maxPageNumber: maxPageNumberSelector(state.navbar.selectedTab)(state),
 });
 const actionCreatorsForTableControl = { nextPage, prevPage };
 const TableControl = (props) => {

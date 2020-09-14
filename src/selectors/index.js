@@ -2,13 +2,13 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 
 // ------------------------------------------------------------------------------------------
-const getTableData = (type) => (state) => state.tableBox.data[type] || [];
+const getTableData = (type) => (state) => state.data.downloads[type] || [];
 const getFilterSetting = (state) => state.search;
 const getSortSetting = (state) => state.sorting;
-const getNumberOfRowsDisplayed = (state) => state.tableBox.settings.numberOfRowsDisplayed;
-const getCurrentPageNumber = (state) => state.tableBox.settings.currentPageNumber;
-const getSelectedEmptyId = (state) => state.emptyInfoBox.selectedEmptyId;
-const getDataErrors = (state) => state.tableBox.errors;
+const getNumberOfRowsDisplayed = (state) => state.table.settings.numberOfRowsDisplayed;
+const getCurrentPageNumber = (state) => state.table.settings.currentPageNumber;
+const getSelectedEmptyId = (state) => state.emptyInfo.selectedEmptyId;
+const getDataErrors = (state) => state.data.errors;
 
 export const getSortSettingSelector = createSelector(
   getSortSetting,
@@ -43,15 +43,18 @@ export const currentPageDataSliceSelector = (tableType) => createSelector(
     return sortedData.slice(startDisp, finishDisp);
   },
 );
+
 export const selectedEmptyDataSelector = (tableType) => createSelector(
   currentPageDataSliceSelector(tableType),
   getSelectedEmptyId,
   (currentPageData, selectedEmptyId) => _.find(currentPageData, { id: selectedEmptyId }),
 );
-export const errorsSelector = createSelector(
+
+export const errorsSelector = (type) => createSelector(
   getDataErrors,
-  (errors) => (Object.entries(errors).length !== 0 ? Object.entries(errors) : null),
+  (errors) => (errors[type] ? errors[type] : null),
 );
+
 export const maxPageNumberSelector = (tableType) => createSelector(
   filtredTableDatasSelector(tableType),
   getNumberOfRowsDisplayed,

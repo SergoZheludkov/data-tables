@@ -9,15 +9,15 @@ import { changeAddEntryСontrolBoxStatus, addEntryToData } from '../slices';
 import getObjectWithTrimedValues from '../utilits';
 
 const mapStateToPropsAddEntry = (state) => ({
-  status: state.addEntryСontrolBox.status,
-  headings: state.tableBox.headings,
-  dataType: state.navbarBox.selectedTab,
+  status: state.addEntryСontrol.status,
+  tableHeaders: state.table.tableHeaders,
+  dataType: state.navbar.selectedTab,
 });
 const actionCreatorsForAddEntryForm = { addEntryToData };
 const AddEntryForm = (props) => {
   const {
     status,
-    headings,
+    tableHeaders,
     dataType,
     addEntryToData: addEntry,
   } = props;
@@ -30,53 +30,51 @@ const AddEntryForm = (props) => {
     email: Yup.string().required().email().trim(),
     phone: Yup.string().required().matches(/\(\d{3}\)\d{3}-\d{4}$/, 'Number format: (123)456-7890 ').trim(),
   });
+  const initialValues = tableHeaders.reduce((acc, header) => ({ ...acc, [header]: '' }), {});
 
-  const initialValues = headings.reduce((acc, head) => ({ ...acc, [head]: '' }), {});
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      const newEntry = getObjectWithTrimedValues(values, headings);
+      const newEntry = getObjectWithTrimedValues(values, tableHeaders);
       addEntry({ newEntry, dataType });
       formik.resetForm();
     },
-    onReset: () => {
-    },
   });
 
-  const Inputs = headings.map((head, i) => {
+  const Inputs = tableHeaders.map((header, i) => {
     const inputClasses = cn({
       'form-control': true,
-      'is-invalid': formik.errors[head],
+      'is-invalid': formik.errors[header],
     });
     const textDivClasses = cn({
       'ml-2': true,
       'text-nowrap': true,
-      'text-danger': formik.errors[head],
+      'text-danger': formik.errors[header],
     });
     const inputBoxClasses = cn({
       'ml-1': i !== 0,
       'w-100': true,
     });
-    const inputHeading = !formik.errors[head] ? head : _.capitalize(formik.errors[head]);
+    const inputHeading = !formik.errors[header] ? header : _.capitalize(formik.errors[header]);
     return (
-      <div key={`add-entry-${head}`} className={inputBoxClasses}>
+      <div key={`add-entry-${header}`} className={inputBoxClasses}>
         <label
-          htmlFor={head}
+          htmlFor={header}
           className={textDivClasses}
         >
           {inputHeading}
         </label>
         <div className={textDivClasses}></div>
         <input
-          id={head}
-          name={head}
-          type={head}
+          id={header}
+          name={header}
+          type={header}
           className={inputClasses}
           onChange={formik.handleChange}
           disabled={false}
-          value={formik.values[head]}
-          placeholder={head}
+          value={formik.values[header]}
+          placeholder={header}
         />
       </div>
     );
@@ -112,6 +110,7 @@ const AddEntryControl = (props) => {
     changeStatus();
   };
   const divClasses = cn({
+    'align-self-end': true,
     'p-2': true,
     'flex-fill': true,
     'text-nowrap': true,

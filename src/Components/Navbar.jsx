@@ -7,7 +7,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import { changeTable } from '../slices';
 // import { spinner } from "./icons";
 
-const mapStateToProps = ({ navbarBox: { elements, selectedTab } }) => ({ elements, selectedTab });
+const mapStateToProps = ({ navbar: { elements, selectedTab } }) => ({ elements, selectedTab });
 const actionCreators = { changeTable };
 
 const NavigationBar = (props) => {

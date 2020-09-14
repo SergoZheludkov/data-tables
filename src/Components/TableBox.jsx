@@ -2,15 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
 import { PageControlBox, ButtonsControlTheNumberOfRowsBox } from './TableControl';
-import { defaultIcon, upIcon, downIcon } from './icons';
-import { changeSorting, setSelectedEmptyId } from '../slices';
-import loading from '../assets/img/loading.gif';
-import Search from './Search';
+import { AddEntryControlBox, AddEntryFormBox } from './AddEntryControlBox';
 import SortedControlBox from './SortedControl';
 import EmptyInfoBox from './EmptyInfoBox';
-import { AddEntryControlBox, AddEntryFormBox } from './AddEntryControlBox';
+import Search from './Search';
+import { changeSorting, setSelectedEmptyId, downloadLocalData } from '../slices';
+import { defaultIcon, upIcon, downIcon } from './icons';
+import loading from '../assets/img/loading.gif';
 
 // ------------------------------------------------------------------------------------------
 const TableControlBox = () => (
@@ -32,9 +34,8 @@ const getCurrentIcon = (sortType) => {
   }
 };
 const mapStateToPropsForTable = (state) => ({
-  currentData: currentPageDataSliceSelector(state.navbarBox.selectedTab)(state),
-  tableHeaders: state.tableBox.tableHeaders,
-  errors: errorsSelector(state),
+  currentData: currentPageDataSliceSelector(state.navbar.selectedTab)(state),
+  tableHeaders: state.table.tableHeaders,
   sortedInfo: state.sorting.types,
 });
 const actionCreatorsForHeader = { changeSorting };
@@ -98,9 +99,9 @@ const RowsBox = connect(
   actionCreatorsForRows,
 )(Rows);
 // ------------------------------------------------------------------------------------------
-const geDataDownloadingStatus = (type) => (state) => state.tableBox.statuses[type];
+const geDataDownloadingStatus = (type) => (state) => state.data.statuses[type];
 const mapStateToPropsStatus = (state) => ({
-  status: geDataDownloadingStatus(state.navbarBox.selectedTab)(state),
+  status: geDataDownloadingStatus(state.navbar.selectedTab)(state),
 });
 const TheTable = ({ status }) => {
   if (status !== 'success') {
@@ -110,7 +111,8 @@ const TheTable = ({ status }) => {
       </div>
     );
   }
-  return (<>
+  return (
+    <>
       <SortedControlBox />
       <TableControlBox />
       <AddEntryFormBox />
@@ -139,11 +141,38 @@ const TheTable = ({ status }) => {
 const TableBox = connect(mapStateToPropsStatus)(TheTable);
 
 const mapStateToPropsForDisplay = (state) => ({
-  currentTab: state.navbarBox.selectedTab,
+  currentTab: state.navbar.selectedTab,
+  error: errorsSelector(state.navbar.selectedTab)(state),
 });
-
+const actionCreatorsForDisplay = { downloadLocalData };
 const DisplayBox = (props) => {
-  const { currentTab } = props;
+  const {
+    currentTab,
+    error,
+    downloadLocalData: downloadLocal,
+  } = props;
+  const handleClickDownloadLocalData = (type) => (event) => {
+    event.preventDefault();
+    downloadLocal({ type });
+  };
+  if (error) {
+    return (
+    <div className="d-flex justify-content-center mt-5">
+      <Alert className="w-50" variant="danger">
+        <Alert.Heading>Oh snap! You got {error.message}!</Alert.Heading>
+        <p>
+          An error occured, to use the demo version you can load data from local storage
+        </p>
+        <hr />
+        <div className="d-flex justify-content-end">
+          <Button onClick={handleClickDownloadLocalData(currentTab)} variant="primary">
+            Download local data
+          </Button>
+        </div>
+      </Alert>
+    </div>
+    );
+  }
   return (
     <div>
       {currentTab === 'home' && <p>Hello, man!</p>}
@@ -152,4 +181,7 @@ const DisplayBox = (props) => {
   );
 };
 
-export default connect(mapStateToPropsForDisplay)(DisplayBox);
+export default connect(
+  mapStateToPropsForDisplay,
+  actionCreatorsForDisplay,
+)(DisplayBox);

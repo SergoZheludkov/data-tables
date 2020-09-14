@@ -7,9 +7,7 @@ import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
 import { filterData, filteredReset } from '../slices';
 
-const mapStateToPropsForSearch = (state) => ({
-  tableHeaders: state.tableBox.tableHeaders,
-});
+const mapStateToPropsForSearch = (state) => ({ tableHeaders: state.table.tableHeaders });
 const actionCreatorsForSearch = { filterData, filteredReset };
 
 const Search = (props) => {
@@ -27,13 +25,15 @@ const Search = (props) => {
       selectedHeader: tableHeaders[0],
     },
     validationSchema,
-    onSubmit: (values) => filter(values),
+    onSubmit: (values) => {
+      filter(values);
+    },
     onReset: () => {
-      formik.setValues({ search: ' ' });
+      formik.setValues({ searchText: ' ' });
       reset();
     },
   });
-  const formikSearchError = formik.errors.search;
+  const formikSearchError = formik.errors.searchText;
   const inputClasses = cn({
     'form-control': true,
     'is-invalid': formikSearchError,

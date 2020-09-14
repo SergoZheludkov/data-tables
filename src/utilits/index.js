@@ -1,4 +1,4 @@
-const getObjectWithTrimedValues = (data, headings) => headings
-  .reduce((acc, head) => ({ ...acc, [head]: data[head].trim() }), {});
+const getObjectWithTrimedValues = (data, tableHeaders) => tableHeaders
+  .reduce((acc, header) => ({ ...acc, [header]: data[header].trim() }), {});
 
 export default getObjectWithTrimedValues;
