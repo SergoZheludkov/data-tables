@@ -1,19 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import Navbar from 'react-bootstrap/Navbar';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { changeTable } from '../slices';
+import { changeTable } from '../slices/navbarSlice';
 
-const mapStateToProps = ({ navbar: { elements, selectedTab } }) => ({ elements, selectedTab });
-const actionCreators = { changeTable };
-
-const NavigationBar = (props) => {
-  const { elements, selectedTab, changeTable: change } = props;
+const NavigationBar = () => {
+  const selectedTab = useSelector((state) => state.navbar.selectedTab);
+  const elements = useSelector((state) => state.navbar.elements);
+  const dispatch = useDispatch();
 
   const handleClickTab = (key) => (event) => {
     event.preventDefault();
-    change({ type: key });
+    dispatch(changeTable({ type: key }));
   };
 
   const elementsArray = Object.entries(elements);
@@ -40,4 +39,4 @@ const NavigationBar = (props) => {
   );
 };
 
-export default connect(mapStateToProps, actionCreators)(NavigationBar);
+export default NavigationBar;

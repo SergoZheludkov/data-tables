@@ -1,20 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from 'react-bootstrap/Button';
-import { sortReset } from '../slices';
+import { sortReset } from '../slices/sortingSlice';
 import ListSettingOfSortBox from './ListSettingOfSort';
 
-const mapStateToPropsForListSettigsOfSort = (state) => ({ settings: state.sorting });
-const actionCreatorsForSortedControl = { sortReset };
+const SortedControl = () => {
+  const settings = useSelector((state) => state.sorting);
+  const dispatch = useDispatch();
 
-const SortedControl = (props) => {
-  const {
-    sortReset: reset,
-    settings,
-  } = props;
   const handlerReset = (event) => {
     event.preventDefault();
-    reset();
+    dispatch(sortReset());
   };
   const resetDisabled = settings.order.length < 1;
   return (
@@ -30,9 +26,5 @@ const SortedControl = (props) => {
     </div>
   );
 };
-const SortedControlBox = connect(
-  mapStateToPropsForListSettigsOfSort,
-  actionCreatorsForSortedControl,
-)(SortedControl);
 
-export default SortedControlBox;
+export default SortedControl;

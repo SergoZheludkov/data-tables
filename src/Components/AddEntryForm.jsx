@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import cn from 'classnames';
 import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
-import { addEntryToData } from '../slices';
+import { addEntryToData } from '../slices/dataSlice';
 import getObjectWithTrimedValues from '../utilits';
 
 const mapStateToPropsAddEntryForm = (state) => ({

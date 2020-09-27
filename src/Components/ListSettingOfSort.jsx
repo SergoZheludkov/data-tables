@@ -1,17 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { removeSortedType } from '../slices';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeSortedType } from '../slices/sortingSlice';
 import { closeIcon, rightArrow } from './icons';
 
-const mapStateToPropsForListSettigsOfSort = (state) => ({ settings: state.sorting });
-const actionCreatorsForListSettingOfSort = { removeSortedType };
-
-const ListSettingOfSort = (props) => {
-  const { settings, removeSortedType: remove } = props;
+const ListSettingOfSort = () => {
+  const settings = useSelector((state) => state.sorting);
+  const dispatch = useDispatch();
   const { order, types } = settings;
   const handlerClose = (type) => (event) => {
     event.preventDefault();
-    remove({ header: type });
+    dispatch(removeSortedType({ header: type }));
   };
   const settingDivs = order.map((header, i) => (
     <React.Fragment key={`sortedlist-${header}`}>
@@ -33,7 +31,5 @@ const ListSettingOfSort = (props) => {
       {displayedSorting}
     </div>);
 };
-export default connect(
-  mapStateToPropsForListSettigsOfSort,
-  actionCreatorsForListSettingOfSort,
-)(ListSettingOfSort);
+
+export default ListSettingOfSort;

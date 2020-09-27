@@ -1,19 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import cn from 'classnames';
 import Button from 'react-bootstrap/Button';
-import { changeAddEntryСontrolBoxStatus } from '../slices';
+import { changeAddingEntryBoxStatus } from '../slices/addingEntrySlice';
 // ------------------------------------------------------------------------------------------
-const mapStateToPropsAddEntry = (state) => ({
-  status: state.addEntryСontrol.status,
-});
-const actionCreatorsForAddEntry = { changeAddEntryСontrolBoxStatus };
 
-const AddEntryControl = (props) => {
-  const { status, changeAddEntryСontrolBoxStatus: changeStatus } = props;
-  const handlerChangeStatus = (event) => {
-    event.preventDefault();
-    changeStatus();
+const AddEntryControl = () => {
+  const status = useSelector((state) => state.addEntryСontrol.status);
+  const dispatch = useDispatch();
+  const handlerChangeStatus = () => {
+    dispatch(changeAddingEntryBoxStatus());
   };
   const divClasses = cn({
     'align-self-end': true,
@@ -33,7 +29,4 @@ const AddEntryControl = (props) => {
   );
 };
 
-export default connect(
-  mapStateToPropsAddEntry,
-  actionCreatorsForAddEntry,
-)(AddEntryControl);
+export default AddEntryControl;

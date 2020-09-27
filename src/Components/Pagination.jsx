@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import { maxPageNumberSelector } from '../selectors';
-import { nextPage, prevPage } from '../slices';
+import { nextPage, prevPage } from '../slices/tableSlice';
 // ------------------------------------------------------------------------------------------
 // div with information about number page and with buttons controlling the table page
 const mapStateToPropsForTableControl = (state) => ({

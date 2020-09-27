@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { changeNumberOfRowsDisplayed } from '../slices';
+import { changeNumberOfRowsDisplayed } from '../slices/tableSlice';
 
 const mapStateToPropsForTheNumberOfRows = (state) => ({
   numberOfRowsDisplayed: state.table.settings.numberOfRowsDisplayed,

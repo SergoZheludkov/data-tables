@@ -1,21 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import cn from 'classnames';
 import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
-import { filterData, filteredReset } from '../slices';
+import { filterData, filteredReset } from '../slices/searchSlice';
 
-const mapStateToPropsForSearch = (state) => ({ tableHeaders: state.table.tableHeaders });
-const actionCreatorsForSearch = { filterData, filteredReset };
+const Search = () => {
+  const tableHeaders = useSelector((state) => state.table.tableHeaders);
+  const dispatch = useDispatch();
 
-const Search = (props) => {
-  const {
-    tableHeaders,
-    filterData: filter,
-    filteredReset: reset,
-  } = props;
   const validationSchema = Yup.object({
     searchText: Yup.mixed().required(),
   });
@@ -26,11 +21,11 @@ const Search = (props) => {
     },
     validationSchema,
     onSubmit: (values) => {
-      filter(values);
+      dispatch(filterData(values));
     },
     onReset: () => {
       formik.setValues({ searchText: ' ' });
-      reset();
+      dispatch(filteredReset());
     },
   });
   const formikSearchError = formik.errors.searchText;
@@ -98,7 +93,4 @@ const Search = (props) => {
   );
 };
 
-export default connect(
-  mapStateToPropsForSearch,
-  actionCreatorsForSearch,
-)(Search);
+export default Search;
