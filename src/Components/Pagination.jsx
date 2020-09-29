@@ -1,53 +1,46 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import Button from 'react-bootstrap/Button';
+import { useSelector, useDispatch } from 'react-redux';
+import ReactPaginate from 'react-paginate';
 import { maxPageNumberSelector } from '../selectors';
-import { nextPage, prevPage } from '../slices/tableSlice';
+import { setCurrentPageNumber } from '../slices/paginationSlice';
 // ------------------------------------------------------------------------------------------
 // div with information about number page and with buttons controlling the table page
-const mapStateToPropsForTableControl = (state) => ({
-  currentPageNumber: state.table.settings.currentPageNumber,
-  maxPageNumber: maxPageNumberSelector(state.navbar.selectedTab)(state),
-});
-const actionCreatorsForTableControl = { nextPage, prevPage };
-const TableControl = (props) => {
-  const {
-    currentPageNumber,
-    maxPageNumber,
-    prevPage: prev,
-    nextPage: next,
-  } = props;
-  const handlerPrevClick = (event) => {
-    event.preventDefault();
-    prev();
+const offset = 1;
+const TableControl = () => {
+  const currentPageNumber = useSelector((state) => state.pagination.currentPageNumber) - offset;
+  const maxPageNumber = useSelector(
+    (state) => maxPageNumberSelector(state.navbar.selectedTab)(state),
+  );
+  const dispatch = useDispatch();
+  const handlePageChange = (data) => {
+    const pageNumber = data.selected + offset;
+    dispatch(setCurrentPageNumber({ pageNumber }));
   };
-  const handlerNextClick = (event) => {
-    event.preventDefault();
-    next();
-  };
-  const prevDisabled = currentPageNumber < 2;
-  const nextDisabled = currentPageNumber >= maxPageNumber;
   return (
-    <div className="d-flex justify-content-between align-items-center p-2 border">
-      <Button
-        onClick={handlerPrevClick}
-        variant="primary"
-        disabled={prevDisabled}
-      >
-        Prev
-      </Button>
-      <div className="flex-grow-1 text-center">{currentPageNumber} of {maxPageNumber}</div>
-      <Button
-        onClick={handlerNextClick}
-        variant="primary"
-        disabled={nextDisabled}
-      >
-        Next
-      </Button>
+    <div className="d-flex justify-content-center align-items-center p-2 border">
+      <ReactPaginate
+        forcePage={currentPageNumber}
+        pageCount={maxPageNumber}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={2}
+        onPageChange={handlePageChange}
+        previousLabel="prev"
+        nextLabel="next"
+        containerClassName={'pagination mb-0'}
+        // ------------------------------------
+        previousClassName={'page-item'}
+        previousLinkClassName={'page-link'}
+        nextClassName={'page-item'}
+        nextLinkClassName={'page-link'}
+        breakClassName={'page-item'}
+        breakLinkClassName={'page-link'}
+        pageClassName={'page-item'}
+        pageLinkClassName={'page-link'}
+        // ------------------------------------
+        activeClassName={'active'}
+        disabledClassName={'disabled'}
+      />
     </div>
   );
 };
-export default connect(
-  mapStateToPropsForTableControl,
-  actionCreatorsForTableControl,
-)(TableControl);
+export default TableControl;

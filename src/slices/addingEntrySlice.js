@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const openClosedStatusMapper = {
+const openCloseStatusMapper = {
   closed: 'opened',
   opened: 'closed',
 };
@@ -12,7 +12,7 @@ const addingEntrySlice = createSlice({
   },
   reducers: {
     changeAddingEntryBoxStatus: (state) => {
-      state.status = openClosedStatusMapper[state.status];
+      state.status = openCloseStatusMapper[state.status];
     },
   },
 });

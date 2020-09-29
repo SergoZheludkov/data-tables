@@ -1,27 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import cn from 'classnames';
 import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
 import { addEntryToData } from '../slices/dataSlice';
-import getObjectWithTrimedValues from '../utilits';
+import getObjectWithTrimedValues from './utilits';
 
-const mapStateToPropsAddEntryForm = (state) => ({
-  status: state.addEntryСontrol.status,
-  tableHeaders: state.table.tableHeaders,
-  dataType: state.navbar.selectedTab,
-});
-const actionCreatorsForAddEntryForm = { addEntryToData };
-const AddEntryForm = (props) => {
-  const {
-    status,
-    tableHeaders,
-    dataType,
-    addEntryToData: addEntry,
-  } = props;
-  if (status === 'closed') return null;
+const AddEntryForm = () => {
+  const tableHeaders = useSelector((state) => state.table.tableHeaders);
+  const dataType = useSelector((state) => state.navbar.selectedTab);
 
   const validationSchema = Yup.object({
     id: Yup.number().typeError('Id must be a number').integer().required(),
@@ -31,14 +20,14 @@ const AddEntryForm = (props) => {
     phone: Yup.string().required().matches(/\(\d{3}\)\d{3}-\d{4}$/, 'Number format: (123)456-7890 ').trim(),
   });
   const initialValues = tableHeaders.reduce((acc, header) => ({ ...acc, [header]: '' }), {});
-
+  console.log('initialValues', initialValues);
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       const newEntry = getObjectWithTrimedValues(values, tableHeaders);
-      addEntry({ newEntry, dataType });
-      formik.resetForm();
+      useDispatch(addEntryToData({ newEntry, dataType }));
+      resetForm();
     },
   });
 
@@ -96,7 +85,4 @@ const AddEntryForm = (props) => {
     </div>
   );
 };
-export default connect(
-  mapStateToPropsAddEntryForm,
-  actionCreatorsForAddEntryForm,
-)(AddEntryForm);
+export default AddEntryForm;

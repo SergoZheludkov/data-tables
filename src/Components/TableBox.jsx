@@ -1,10 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
 import Pagination from './Pagination';
-import ButtonsControlTheNumberOfRowsBox from './ButtonsControlTheNumberOfRows';
+import PageSizeButtons from './PageSizeButtons';
 import AddEntryControlBox from './AddEntryControl';
 import AddEntryForm from './AddEntryForm';
 import SortedControlBox from './SortedControl';
@@ -21,7 +21,7 @@ import Alert from './Alert';
 const TableControlBox = () => (
   <div className="d-flex border-right border-left">
     <Search />
-    <ButtonsControlTheNumberOfRowsBox />
+    <PageSizeButtons />
     <AddEntryControlBox />
   </div>
 );
@@ -36,21 +36,13 @@ const getCurrentIcon = (sortType) => {
       return defaultIcon;
   }
 };
-const mapStateToPropsForTable = (state) => ({
-  currentData: currentPageDataSliceSelector(state.navbar.selectedTab)(state),
-  tableHeaders: state.table.tableHeaders,
-  sortedInfo: state.sorting.types,
-});
-const actionCreatorsForHeader = { changeSorting };
-const Header = (props) => {
-  const {
-    tableHeaders,
-    sortedInfo,
-    changeSorting: change,
-  } = props;
+const Header = () => {
+  const tableHeaders = useSelector((state) => state.table.tableHeaders);
+  const sortedInfo = useSelector((state) => state.sorting.types);
+  const dispatch = useDispatch();
   const handlerChangeSorting = (headType) => (event) => {
     event.preventDefault();
-    change({ header: headType });
+    dispatch(changeSorting({ header: headType }));
   };
   return (tableHeaders
     .map((header) => (
@@ -65,24 +57,21 @@ const Header = (props) => {
     ))
   );
 };
-const HeaderBox = connect(
-  mapStateToPropsForTable,
-  actionCreatorsForHeader,
-)(Header);
+const HeaderBox = Header;
 // ------------------------------------------------------------------------------------------
-const actionCreatorsForRows = { setSelectedEmptyId };
-const Rows = (props) => {
-  const {
-    currentData,
-    tableHeaders,
-    setSelectedEmptyId: addToEmptyInfo,
-  } = props;
+const Rows = () => {
+  const tableHeaders = useSelector((state) => state.table.tableHeaders);
+  const currentData = useSelector((state) => (
+    currentPageDataSliceSelector(state.navbar.selectedTab)(state)
+  ));
+  const dispatch = useDispatch();
+
   if (currentData.length === 0) {
     return (<tr><td colSpan={tableHeaders.length}>None data match</td></tr>);
   }
   const handleClickRow = (id) => (event) => {
     event.preventDefault();
-    addToEmptyInfo({ id });
+    dispatch(setSelectedEmptyId({ id }));
   };
   return (
     currentData
@@ -97,16 +86,14 @@ const Rows = (props) => {
       ))
   );
 };
-const RowsBox = connect(
-  mapStateToPropsForTable,
-  actionCreatorsForRows,
-)(Rows);
+const RowsBox = Rows;
 // ------------------------------------------------------------------------------------------
 const geDataDownloadingStatus = (type) => (state) => state.data.statuses[type];
-const mapStateToPropsStatus = (state) => ({
-  status: geDataDownloadingStatus(state.navbar.selectedTab)(state),
-});
-const TheTable = ({ status }) => {
+const TheTable = () => {
+  const status = useSelector((state) => (
+    geDataDownloadingStatus(state.navbar.selectedTab)(state)
+  ));
+  const addEntryFormStatus = useSelector((state) => state.addEntryСontrol.status);
   if (status !== 'success') {
     return (
       <div className="min-vh-100 d-flex justify-content-center align-items-center">
@@ -118,7 +105,7 @@ const TheTable = ({ status }) => {
     <>
       <SortedControlBox />
       <TableControlBox />
-      <AddEntryForm />
+      { addEntryFormStatus === 'opened' && <AddEntryForm />}
       <Pagination />
       <Table
         striped
@@ -141,17 +128,11 @@ const TheTable = ({ status }) => {
     </>
   );
 };
-const TableBox = connect(mapStateToPropsStatus)(TheTable);
+const TableBox = TheTable;
 
-const mapStateToPropsForDisplay = (state) => ({
-  currentTab: state.navbar.selectedTab,
-  error: errorsSelector(state.navbar.selectedTab)(state),
-});
-const DisplayBox = (props) => {
-  const {
-    currentTab,
-    error,
-  } = props;
+const DisplayBox = () => {
+  const currentTab = useSelector((state) => state.navbar.selectedTab);
+  const error = useSelector((state) => errorsSelector(state.navbar.selectedTab)(state));
   if (error) return <Alert />;
   return (
     <div>
@@ -161,4 +142,4 @@ const DisplayBox = (props) => {
   );
 };
 
-export default connect(mapStateToPropsForDisplay)(DisplayBox);
+export default DisplayBox;

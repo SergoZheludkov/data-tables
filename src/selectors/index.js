@@ -5,8 +5,8 @@ import _ from 'lodash';
 const getTableData = (type) => (state) => state.data.downloads[type] || [];
 const getFilterSetting = (state) => state.search;
 const getSortSetting = (state) => state.sorting;
-const getNumberOfRowsDisplayed = (state) => state.table.settings.numberOfRowsDisplayed;
-const getCurrentPageNumber = (state) => state.table.settings.currentPageNumber;
+const getPageSize = (state) => state.pageSize.currentSize;
+const getCurrentPageNumber = (state) => state.pagination.currentPageNumber;
 const getSelectedEmptyId = (state) => state.emptyInfo.selectedEmptyId;
 const getDataErrors = (state) => state.data.errors;
 
@@ -35,7 +35,7 @@ const sortedTableDatasSelector = (tableType) => createSelector(
 );
 export const currentPageDataSliceSelector = (tableType) => createSelector(
   sortedTableDatasSelector(tableType),
-  getNumberOfRowsDisplayed,
+  getPageSize,
   getCurrentPageNumber,
   (sortedData, numOfRowsDisp, currentPageNum) => {
     const startDisp = currentPageNum * numOfRowsDisp - numOfRowsDisp;
@@ -57,6 +57,6 @@ export const errorsSelector = (type) => createSelector(
 
 export const maxPageNumberSelector = (tableType) => createSelector(
   filtredTableDatasSelector(tableType),
-  getNumberOfRowsDisplayed,
+  getPageSize,
   (tableDatas, numOfRowsDisp) => Math.ceil(tableDatas.length / numOfRowsDisp) || 1,
 );

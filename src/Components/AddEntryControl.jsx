@@ -8,7 +8,7 @@ import { changeAddingEntryBoxStatus } from '../slices/addingEntrySlice';
 const AddEntryControl = () => {
   const status = useSelector((state) => state.addEntryСontrol.status);
   const dispatch = useDispatch();
-  const handlerChangeStatus = () => {
+  const handleChangeStatus = () => {
     dispatch(changeAddingEntryBoxStatus());
   };
   const divClasses = cn({
@@ -22,7 +22,7 @@ const AddEntryControl = () => {
   return (
     <div className={divClasses}>
       <div className="text-center">Add Entry</div>
-      <Button onClick={handlerChangeStatus} className="w-100 " variant="info">
+      <Button onClick={handleChangeStatus} className="w-100 " variant="info">
         {status === 'closed' ? 'Open form' : 'Close'}
       </Button>
     </div>

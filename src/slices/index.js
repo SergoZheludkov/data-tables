@@ -7,6 +7,8 @@ import emptyInfoReducer from './emptyInfoSlice';
 import searchReducer from './searchSlice';
 import sortingReducer from './sortingSlice';
 import tableReducer from './tableSlice';
+import paginationReducer from './paginationSlice';
+import pageSizeReducer from './pageSizeSlice';
 
 export default combineReducers({
   data: dataReducer,
@@ -16,4 +18,6 @@ export default combineReducers({
   search: searchReducer,
   sorting: sortingReducer,
   table: tableReducer,
+  pagination: paginationReducer,
+  pageSize: pageSizeReducer,
 });
