@@ -1,46 +1,50 @@
 { 
   "translation": {
-    "channelsControl": {
-      "header": "Channels"
-    },
-    "messageInput": {
-      "placeholder": "Input your message",
-      "sendButton": "Send"
-    },
-    "iconsTooltip": {
-      "create": "Create channel",
-      "rename": "Rename channel",
-      "remove": "Remove channel"
-    },
-    "modals": {
-      "identifier": {
-        "header": "Identification",
-        "placeholder": "Nickname",
-        "confirmButton": "Confirm",
-        "messages": "Enter your nickname to use the chat"
-      },
-      "create": {
-        "header": "Create channel",
-        "placeholder": "Channel name",
-        "confirmButton": "Create",
-        "messages": "Enter the name of the new channel"
-      },
-      "rename": {
-        "header": "Rename the channel",
-        "placeholder": "Channel name",
-        "confirmButton": "Rename",
-        "messages": "Enter a new name of channel"
-      },
-      "remove": {
-        "header": "Remove the channel",
-        "confirmButton": "Remove",
-        "messages": "Do you want to remove the \"{{ channelName }}\" channel?\nAll messages will be removed too"
+    "navigation": {
+      "projectName": "Future-Group Tables",
+      "buttons": {
+        "home": "home",
+        "small": "small dataset",
+        "large": "large dataset"
       }
     },
-    "yupModalErrors": {
-      "required": "The field must not be empty",
-      "min": "The field must be at least 3 characters"
+    "homepage": {
+      "title": "Direction",
+      "firstDirection": "Use the search bar to filter items",
+      "secondDirection": "To add a new line use the data entry form",
+      "thirdDirectionP1": "For sorting use the table header",
+      "thirdDirectionP2": "To partially or completely reset sorting settings use Sort Info"
     },
-    "cancelButton": "Cancel"
+    "sort": {
+      "title": "Sorted by:",
+      "none": "Not Sorted"
+    },
+    "search": {
+      "title": "Search",
+      "idLabel": "Select a row to filter"
+    },
+    "pageSize": {
+      "title": "Select row count" 
+    },
+    "addEntry": {
+      "title": "Add Entry"
+    },
+    "validation": {
+      "integer": "Id must be a number",
+      "required": "The field must not be empty",
+      "phone": "Number format: (123)456-7890",
+      "email": "Email must be a valid email",
+      "min2": "Minimum length: 2 characters"
+
+    },
+    "buttons": {
+      "find": "Find",
+      "reset": "Reset",
+      "close": "Close",
+      "prev": "Prev",
+      "next": "Next",
+      "openForm": "Open Form",
+      "addEntry": "Add Entry"
+    }
   }
 }

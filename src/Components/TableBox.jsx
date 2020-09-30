@@ -1,8 +1,7 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
+import { useSelector } from 'react-redux';
 import Table from 'react-bootstrap/Table';
-import { errorsSelector, currentPageDataSliceSelector } from '../selectors';
+import { errorsSelector } from '../selectors';
 import Pagination from './Pagination';
 import PageSizeButtons from './PageSizeButtons';
 import AddEntryControlBox from './AddEntryControl';
@@ -11,13 +10,11 @@ import SortedControlBox from './SortedControl';
 import EmptyInfoBox from './EmptyInfoBox';
 import Search from './Search';
 import HomePage from './HomePage';
-import { changeSorting } from '../slices/sortingSlice';
-import { setSelectedEmptyId } from '../slices/emptyInfoSlice';
-import { defaultIcon, upIcon, downIcon } from './icons';
-import loading from '../assets/img/loading.gif';
+import TableHeader from './TableHeader';
+import TableRows from './TableRows';
+import Loading from './Loading';
 import Alert from './Alert';
 
-// ------------------------------------------------------------------------------------------
 const TableControlBox = () => (
   <div className="d-flex border-right border-left">
     <Search />
@@ -25,102 +22,29 @@ const TableControlBox = () => (
     <AddEntryControlBox />
   </div>
 );
-// ------------------------------------------------------------------------------------------
-const getCurrentIcon = (sortType) => {
-  switch (sortType) {
-    case 'asc':
-      return downIcon;
-    case 'desc':
-      return upIcon;
-    default:
-      return defaultIcon;
-  }
-};
-const Header = () => {
-  const tableHeaders = useSelector((state) => state.table.tableHeaders);
-  const sortedInfo = useSelector((state) => state.sorting.types);
-  const dispatch = useDispatch();
-  const handlerChangeSorting = (headType) => (event) => {
-    event.preventDefault();
-    dispatch(changeSorting({ header: headType }));
-  };
-  return (tableHeaders
-    .map((header) => (
-      <th onClick={handlerChangeSorting(header)} key={header}>
-        <div className="float-left">
-          {header}
-        </div>
-        <div className="float-right">
-          {getCurrentIcon(sortedInfo[header])}
-        </div>
-      </th>
-    ))
-  );
-};
-const HeaderBox = Header;
-// ------------------------------------------------------------------------------------------
-const Rows = () => {
-  const tableHeaders = useSelector((state) => state.table.tableHeaders);
-  const currentData = useSelector((state) => (
-    currentPageDataSliceSelector(state.navbar.selectedTab)(state)
-  ));
-  const dispatch = useDispatch();
-
-  if (currentData.length === 0) {
-    return (<tr><td colSpan={tableHeaders.length}>None data match</td></tr>);
-  }
-  const handleClickRow = (id) => (event) => {
-    event.preventDefault();
-    dispatch(setSelectedEmptyId({ id }));
-  };
-  return (
-    currentData
-      .map((person) => (
-        <tr key={_.uniqueId()} onClick={handleClickRow(person.id)}>
-          {tableHeaders.map((header) => (
-            <td key={`p-${person[header]}`}>
-              {person[header]}
-            </td>
-          ))}
-      </tr>
-      ))
-  );
-};
-const RowsBox = Rows;
-// ------------------------------------------------------------------------------------------
-const geDataDownloadingStatus = (type) => (state) => state.data.statuses[type];
+const getDownloadingStatus = (type) => (state) => state.data.statuses[type];
 const TheTable = () => {
-  const status = useSelector((state) => (
-    geDataDownloadingStatus(state.navbar.selectedTab)(state)
-  ));
+  const currentTab = useSelector((state) => state.navbar.selectedTab);
+  const downloadingStatus = useSelector((state) => (getDownloadingStatus(currentTab)(state)));
   const addEntryFormStatus = useSelector((state) => state.addEntryСontrol.status);
-  if (status !== 'success') {
-    return (
-      <div className="min-vh-100 d-flex justify-content-center align-items-center">
-          <img className="w-25" src={loading}/>
-      </div>
-    );
-  }
+  const error = useSelector((state) => errorsSelector(state.navbar.selectedTab)(state));
+
+  if (error) return <Alert />;
+  if (downloadingStatus !== 'success') return <Loading />;
   return (
     <>
       <SortedControlBox />
       <TableControlBox />
       { addEntryFormStatus === 'opened' && <AddEntryForm />}
       <Pagination />
-      <Table
-        striped
-        bordered
-        hover
-        size="sm"
-        className="m-0"
-      >
+      <Table striped bordered hover size="sm" className="m-0">
         <thead>
           <tr>
-            <HeaderBox />
+            <TableHeader />
           </tr>
         </thead>
         <tbody>
-          <RowsBox />
+          <TableRows />
         </tbody>
       </Table>
       <Pagination />
@@ -128,18 +52,15 @@ const TheTable = () => {
     </>
   );
 };
-const TableBox = TheTable;
 
-const DisplayBox = () => {
+const TableBox = () => {
   const currentTab = useSelector((state) => state.navbar.selectedTab);
-  const error = useSelector((state) => errorsSelector(state.navbar.selectedTab)(state));
-  if (error) return <Alert />;
   return (
     <div>
       {currentTab === 'home' && <HomePage />}
-      {currentTab !== 'home' && <TableBox />}
+      {currentTab !== 'home' && <TheTable />}
     </div>
   );
 };
 
-export default DisplayBox;
+export default TableBox;

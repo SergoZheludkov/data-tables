@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Button from 'react-bootstrap/Button';
 import { sortReset } from '../slices/sortingSlice';
 import ListSettingOfSortBox from './ListSettingOfSort';
@@ -7,6 +8,7 @@ import ListSettingOfSortBox from './ListSettingOfSort';
 const SortedControl = () => {
   const settings = useSelector((state) => state.sorting);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const handlerReset = (event) => {
     event.preventDefault();
@@ -21,7 +23,7 @@ const SortedControl = () => {
         disabled={resetDisabled}
         variant="primary"
       >
-        Reset
+        {t('buttons.reset')}
       </Button>
     </div>
   );

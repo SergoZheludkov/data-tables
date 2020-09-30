@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import cn from 'classnames';
@@ -10,9 +11,10 @@ import { filterData, filteredReset } from '../slices/searchSlice';
 const Search = () => {
   const tableHeaders = useSelector((state) => state.table.tableHeaders);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const validationSchema = Yup.object({
-    searchText: Yup.mixed().required(),
+    searchText: Yup.mixed().required(t('validation.required')),
   });
   const formik = useFormik({
     initialValues: {
@@ -50,7 +52,7 @@ const Search = () => {
           htmlFor="searchText"
           className={textDivClasses}
         >
-          {!formikSearchError ? 'Search' : _.capitalize(formikSearchError)}
+          {!formikSearchError ? t('search.title') : _.capitalize(formikSearchError)}
         </label>
         <input
           id="searchText"
@@ -60,7 +62,7 @@ const Search = () => {
           onChange={formik.handleChange}
           disabled={false}
           value={formik.values.searchText}
-          placeholder="Search"
+          placeholder={t('search.title')}
         />
       </div>
       <div className="w-25 text-nowrap">
@@ -68,7 +70,7 @@ const Search = () => {
           htmlFor="selectedHeader"
           className="ml-2"
         >
-          Select a row to filter
+          {t('search.idLabel')}
         </label>
         <select
           id="selectedHeader"
@@ -83,10 +85,10 @@ const Search = () => {
       </div>
       <div className="d-flex w-25 pl-2 justify-content-around">
         <Button className="mr-1 w-50" type="submit" disabled={formikSearchError} variant="primary">
-          Find
+          {t('buttons.find')}
         </Button>
         <Button className="w-50" type="reset" disabled={formikSearchError} variant="primary">
-          Reset
+          {t('buttons.reset')}
         </Button>
       </div>
     </form>

@@ -9,6 +9,7 @@ import sortingReducer from './sortingSlice';
 import tableReducer from './tableSlice';
 import paginationReducer from './paginationSlice';
 import pageSizeReducer from './pageSizeSlice';
+import languageReducer from './languageSlice';
 
 export default combineReducers({
   data: dataReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
   table: tableReducer,
   pagination: paginationReducer,
   pageSize: pageSizeReducer,
+  language: languageReducer,
 });

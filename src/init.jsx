@@ -1,9 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import './i18n.jsx';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import axios from 'axios';
+// import i18n from 'i18next';
 import rootReducer from './slices';
 import App from './Components/App.jsx';
 

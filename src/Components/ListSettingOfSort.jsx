@@ -1,11 +1,13 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { removeSortedType } from '../slices/sortingSlice';
 import { closeIcon, rightArrow } from './icons';
 
 const ListSettingOfSort = () => {
   const settings = useSelector((state) => state.sorting);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { order, types } = settings;
   const handlerClose = (type) => (event) => {
     event.preventDefault();
@@ -24,10 +26,10 @@ const ListSettingOfSort = () => {
     </div>
     </React.Fragment>
   ));
-  const displayedSorting = settingDivs.length > 0 ? settingDivs : <div className="mx-2">Not Sorted</div>;
+  const displayedSorting = settingDivs.length > 0 ? settingDivs : <div className="mx-2">{t('sort.none')}</div>;
   return (
     <div className="d-flex align-items-center">
-      <div>Sorted by:</div>
+      <div>{t('sort.title')}</div>
       {displayedSorting}
     </div>);
 };

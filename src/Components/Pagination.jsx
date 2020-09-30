@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ReactPaginate from 'react-paginate';
 import { maxPageNumberSelector } from '../selectors';
 import { setCurrentPageNumber } from '../slices/paginationSlice';
@@ -12,6 +13,8 @@ const TableControl = () => {
     (state) => maxPageNumberSelector(state.navbar.selectedTab)(state),
   );
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const handlePageChange = (data) => {
     const pageNumber = data.selected + offset;
     dispatch(setCurrentPageNumber({ pageNumber }));
@@ -24,8 +27,8 @@ const TableControl = () => {
         pageRangeDisplayed={3}
         marginPagesDisplayed={2}
         onPageChange={handlePageChange}
-        previousLabel="prev"
-        nextLabel="next"
+        previousLabel={t('buttons.prev')}
+        nextLabel={t('buttons.next')}
         containerClassName={'pagination mb-0'}
         // ------------------------------------
         previousClassName={'page-item'}

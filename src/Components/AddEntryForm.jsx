@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import cn from 'classnames';
@@ -11,16 +12,32 @@ import getObjectWithTrimedValues from './utilits';
 const AddEntryForm = () => {
   const tableHeaders = useSelector((state) => state.table.tableHeaders);
   const dataType = useSelector((state) => state.navbar.selectedTab);
+  const { t } = useTranslation();
 
   const validationSchema = Yup.object({
-    id: Yup.number().typeError('Id must be a number').integer().required(),
-    firstName: Yup.string().required().min(2).trim(),
-    lastName: Yup.string().required().min(2).trim(),
-    email: Yup.string().required().email().trim(),
-    phone: Yup.string().required().matches(/\(\d{3}\)\d{3}-\d{4}$/, 'Number format: (123)456-7890 ').trim(),
+    id: Yup.number()
+      .typeError(t('validation.integer'))
+      .integer()
+      .required(t('validation.required')),
+    firstName: Yup.string()
+      .required(t('validation.required'))
+      .min(2, t('validation.min2'))
+      .trim(),
+    lastName: Yup.string()
+      .required(t('validation.required'))
+      .min(2, t('validation.min2'))
+      .trim(),
+    email: Yup.string()
+      .required(t('validation.required'))
+      .email(t('validation.email'))
+      .trim(),
+    phone: Yup.string()
+      .required(t('validation.required'))
+      .matches(/\(\d{3}\)\d{3}-\d{4}$/, t('validation.phone'))
+      .trim(),
   });
+
   const initialValues = tableHeaders.reduce((acc, header) => ({ ...acc, [header]: '' }), {});
-  console.log('initialValues', initialValues);
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -75,10 +92,10 @@ const AddEntryForm = () => {
         {Inputs}
         <div className="d-flex justify-content-around">
         <Button className="mx-1 text-nowrap" type="submit" disabled={buttonDisabled} variant="primary">
-          Add Entry
+          {t('buttons.addEntry')}
         </Button>
         <Button type="reset" disabled={false} variant="primary">
-          Reset
+          {t('buttons.reset')}
         </Button>
         </div>
       </form>

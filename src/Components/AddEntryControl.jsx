@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import cn from 'classnames';
 import Button from 'react-bootstrap/Button';
 import { changeAddingEntryBoxStatus } from '../slices/addingEntrySlice';
@@ -8,6 +9,7 @@ import { changeAddingEntryBoxStatus } from '../slices/addingEntrySlice';
 const AddEntryControl = () => {
   const status = useSelector((state) => state.addEntryСontrol.status);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const handleChangeStatus = () => {
     dispatch(changeAddingEntryBoxStatus());
   };
@@ -21,9 +23,9 @@ const AddEntryControl = () => {
   });
   return (
     <div className={divClasses}>
-      <div className="text-center">Add Entry</div>
+      <div className="text-center">{t('addEntry.title')}</div>
       <Button onClick={handleChangeStatus} className="w-100 " variant="info">
-        {status === 'closed' ? 'Open form' : 'Close'}
+        {status === 'closed' ? t('buttons.openForm') : t('buttons.close')}
       </Button>
     </div>
   );
