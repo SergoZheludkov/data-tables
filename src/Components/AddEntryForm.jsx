@@ -12,6 +12,7 @@ import getObjectWithTrimedValues from './utilits';
 const AddEntryForm = () => {
   const tableHeaders = useSelector((state) => state.table.tableHeaders);
   const dataType = useSelector((state) => state.navbar.selectedTab);
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const validationSchema = Yup.object({
@@ -43,7 +44,7 @@ const AddEntryForm = () => {
     validationSchema,
     onSubmit: (values, { resetForm }) => {
       const newEntry = getObjectWithTrimedValues(values, tableHeaders);
-      useDispatch(addEntryToData({ newEntry, dataType }));
+      dispatch(addEntryToData({ newEntry, dataType }));
       resetForm();
     },
   });
